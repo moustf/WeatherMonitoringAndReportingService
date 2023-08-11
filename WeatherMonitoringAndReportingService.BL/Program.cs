@@ -1,34 +1,44 @@
 ﻿using WeatherMonitoringAndReportingService.BL.Parsers;
 using WeatherMonitoringAndReportingService.BL.Utilities;
 using WeatherMonitoringAndReportingService.BL.Enums;
+using WeatherMonitoringAndReportingService.BL.Weather;
+using WeatherMonitoringAndReportingService.BL.WeatherBots;
 
 namespace WeatherMonitoringAndReportingService.BL
 {
     internal abstract class Program
     {
-        public static void Main(string[] args)
+        public async static Task Main(string[] args)
         {
             var dataFormatChoice = ConsoleOutputUtility.GetDataFormat();
-
+            
             var jsonParser = new JsonWeatherDataParser();
             var parserContext = new ParserContext(jsonParser);
+
+            var weatherPublisher = new WeatherBotPublisher();
+            weatherPublisher.SetConfigData(await ConfigDataUtility.ReadBotsConfigData());
+            var rainBot = new RainBot(weatherPublisher);
+            var snowBot = new SnowBot(weatherPublisher);
+            var sunBot = new SunBot(weatherPublisher);
             
             switch (dataFormatChoice)
             {
                 case DataFormat.Json:
                 {
-                    ManageJsonParsing(parserContext);
+                    var weatherData = ManageJsonParsing(parserContext);
+                    AnalyzeWeatherData(weatherPublisher, weatherData);
                     break;
                 }
                 case DataFormat.Xml:
                 {
-                    ManageXmlParsing(parserContext);
+                    var weatherData = ManageXmlParsing(parserContext);
+                    AnalyzeWeatherData(weatherPublisher, weatherData);
                     break;
                 }
             }
         }
 
-        private static void ManageJsonParsing(ParserContext parserContext)
+        private static WeatherData ManageJsonParsing(ParserContext parserContext)
         {
             var jsonData = ReadWeatherDataUtility.GetJsonWeatherData();
 
@@ -47,14 +57,12 @@ namespace WeatherMonitoringAndReportingService.BL
                 }
             }
 
-            var weatherData = parserContext.Parse(jsonData!);
+            return parserContext.Parse(jsonData!);
+
             
-            Console.WriteLine(weatherData.Location);
-            Console.WriteLine(weatherData.Temperature);
-            Console.WriteLine(weatherData.Humidity);
         }
 
-        private static void ManageXmlParsing(ParserContext parserContext)
+        private static WeatherData ManageXmlParsing(ParserContext parserContext)
         {
             var xmlParser = new XmlWeatherDataParser();
             parserContext.SetStrategyParser(xmlParser);
@@ -76,11 +84,16 @@ namespace WeatherMonitoringAndReportingService.BL
                 }
             }
 
-            var weatherData = parserContext.Parse(xmlData!);
+            return parserContext.Parse(xmlData!);
+        }
+
+        private static void AnalyzeWeatherData(IBotPublisher weatherPublisher, WeatherData weatherData)
+        {
+            var initialBotsConfigs = weatherPublisher.GetConfigData();
+            var weatherConfigsAfterAnalysis = WeatherAnalysisUtility.AnalyzeWeatherData(weatherData, initialBotsConfigs);
             
-            Console.WriteLine(weatherData.Location);
-            Console.WriteLine(weatherData.Temperature);
-            Console.WriteLine(weatherData.Humidity);
+            weatherPublisher.Notify();
+            weatherPublisher.SetConfigData(weatherConfigsAfterAnalysis);
         }
     }
 }
