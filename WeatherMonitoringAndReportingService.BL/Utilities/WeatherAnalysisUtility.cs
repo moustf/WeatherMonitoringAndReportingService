@@ -5,8 +5,13 @@ namespace WeatherMonitoringAndReportingService.BL.Utilities;
 
 public static class WeatherAnalysisUtility
 {
-    public static Dictionary<string, WeatherBotConfig> AnalyzeWeatherData(WeatherData weatherData, Dictionary<string, WeatherBotConfig> botConfigs)
+    public static async Task<Dictionary<string, WeatherBotConfig>> AnalyzeWeatherData(WeatherData weatherData, Dictionary<string, WeatherBotConfig> botConfigs)
     {
+        if (weatherData.Humidity > botConfigs["RainBot"].HumidityThreshold)
+        {
+            botConfigs["SunBot"].Enabled = true;
+        }
+        
         if (weatherData.Temperature > botConfigs["SunBot"].TemperatureThreshold)
         {
             botConfigs["SunBot"].Enabled = true;
@@ -17,6 +22,7 @@ public static class WeatherAnalysisUtility
             botConfigs["SunBot"].Enabled = true;
         }
 
+        await ConfigDataUtility.WriteBotsConfigData(botConfigs);
         return botConfigs;
     }
 }

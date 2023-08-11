@@ -26,9 +26,4 @@ public class XmlWeatherDataParser : IParser
 
         return WeatherData;
     }
-
-    public WeatherData GetWeatherData()
-    {
-        return WeatherData;
-    }
 }

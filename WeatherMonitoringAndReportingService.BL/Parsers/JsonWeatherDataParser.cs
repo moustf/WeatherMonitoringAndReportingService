@@ -5,21 +5,21 @@ namespace WeatherMonitoringAndReportingService.BL.Parsers;
 
 public class JsonWeatherDataParser : IParser
 {
-    public WeatherData WeatherData { get; set; }
+    private WeatherData _weatherData;
 
     public JsonWeatherDataParser()
     {
-        WeatherData = new WeatherData("", 0, 0);
+        _weatherData = new WeatherData("", 0, 0);
     }
 
     public WeatherData Parse(string weatherData)
     {
         var weatherInput = JsonSerializer.Deserialize<WeatherData>(weatherData);
 
-        WeatherData.Location = weatherInput!.Location;
-        WeatherData.Temperature = weatherInput.Temperature;
-        WeatherData.Humidity = weatherInput.Humidity;
+        _weatherData.Location = weatherInput!.Location;
+        _weatherData.Temperature = weatherInput.Temperature;
+        _weatherData.Humidity = weatherInput.Humidity;
 
-        return WeatherData;
+        return _weatherData;
     }
 }
