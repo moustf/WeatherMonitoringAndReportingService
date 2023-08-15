@@ -1,5 +1,7 @@
-﻿using WeatherMonitoringAndReportingService.BL.Parsers;
-using WeatherMonitoringAndReportingService.BL.Utilities;
+﻿using WeatherMonitoringAndReportingService.BL.BotsConfig;
+using WeatherMonitoringAndReportingService.BL.Common.Utilities;
+using WeatherMonitoringAndReportingService.BL.Common.Validation;
+using WeatherMonitoringAndReportingService.BL.Parsers;
 using WeatherMonitoringAndReportingService.BL.Enums;
 using WeatherMonitoringAndReportingService.BL.Weather;
 using WeatherMonitoringAndReportingService.BL.WeatherBots;
@@ -10,37 +12,65 @@ namespace WeatherMonitoringAndReportingService.BL
     {
         public static async Task Main(string[] args)
         {
-            var dataFormatChoice = ConsoleOutputUtility.GetDataFormat();
+            await ApplicationFlow();
+        }
 
-            #region Declaring Instances
+        private static async Task ApplicationFlow()
+        {
+            var selectedFormat = ConsoleOutputUtility.GetDataFormat();
 
             var jsonParser = new JsonWeatherDataParser();
             var parserContext = new ParserContext(jsonParser);
-            var weatherPublisher = new WeatherBotPublisher();
-            weatherPublisher.SetConfigData(await ConfigDataUtility.ReadBotsConfigData());
-            var rainBot = new RainBot(weatherPublisher);
-            var snowBot = new SnowBot(weatherPublisher);
-            var sunBot = new SunBot(weatherPublisher);
+            var weatherPublisher = BotPublisherProvider.Instance;
+            var jsonConfig = JsonConfigProvider.Instance;
 
-            #endregion
+            weatherPublisher.SetConfigData(await jsonConfig.ReadBotsConfigData());
             
-            switch (dataFormatChoice)
+            
+            switch (selectedFormat)
             {
+                case DataFormat.Exit:
+                {
+                    Console.WriteLine("thanks for choosing our service!");
+                    Environment.Exit(0);
+                    break;
+                }
                 case DataFormat.Json:
                 {
                     var weatherData = ManageJsonParsing(parserContext);
-                    await AnalyzeWeatherData(weatherPublisher, weatherData);
+                    await AnalyzeWeatherData(weatherPublisher, weatherData, jsonConfig);
                     break;
                 }
                 case DataFormat.Xml:
                 {
                     var weatherData = ManageXmlParsing(parserContext);
-                    await AnalyzeWeatherData(weatherPublisher, weatherData);
+                    await AnalyzeWeatherData(weatherPublisher, weatherData, jsonConfig);
+                    break;
+                }
+                case DataFormat.ShowFormat:
+                {
+                    Console.WriteLine("JSON data format!");
+                    Console.WriteLine("""
+                        {
+                          "Location": "City Name",
+                          "Temperature": 23.0,
+                          "Humidity": 85.0
+                        }
+                    """);
+                    Console.WriteLine("XML data format!");
+                    Console.WriteLine("""
+                        <WeatherData>
+                          <Location>City Name</Location>
+                          <Temperature>23.0</Temperature>
+                          <Humidity>85.0</Humidity>
+                        </WeatherData>
+                    """);
+                    await ApplicationFlow();
                     break;
                 }
             }
         }
-
+        
         private static WeatherData ManageJsonParsing(ParserContext parserContext)
         {
             var jsonData = ReadWeatherDataUtility.GetJsonWeatherData();
@@ -86,11 +116,17 @@ namespace WeatherMonitoringAndReportingService.BL
             return parserContext.Parse(xmlData!);
         }
 
-        private static async Task AnalyzeWeatherData(IBotPublisher weatherPublisher, WeatherData weatherData)
+        private static async Task AnalyzeWeatherData(
+            IBotPublisher weatherPublisher,
+            WeatherData weatherData,
+            IWeatherBotConfigIO jsonConfig
+            )
         {
             var initialBotsConfigs = weatherPublisher.GetConfigData();
-            var weatherConfigsAfterAnalysis = await WeatherAnalysisUtility
+            var weatherConfigsAfterAnalysis = WeatherAnalysisUtility
                 .AnalyzeWeatherData(weatherData, initialBotsConfigs);
+
+            await jsonConfig.WriteBotsConfigData(weatherConfigsAfterAnalysis);
             
             weatherPublisher.Notify();
             weatherPublisher.SetConfigData(weatherConfigsAfterAnalysis);
