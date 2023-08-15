@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace WeatherMonitoringAndReportingService.BL.Validation;
+namespace WeatherMonitoringAndReportingService.BL.Common.Validation;
 
 public class XmlValidation
 {
@@ -21,10 +21,18 @@ public class XmlValidation
         try
         {
             var xDocument = XDocument.Parse(xmlData!);
+            
+            if (!xDocument.Descendants("Location").Any())
+            {
+                throw new NullReferenceException("an empty object has been added!");
+            }
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
+            if (e.GetType() == typeof(NullReferenceException))
+            {
+                _errors.Add(e.Message);
+            }
             
             _errors.Add("Invalid xml data!");
             _errors.Add(e.Message);

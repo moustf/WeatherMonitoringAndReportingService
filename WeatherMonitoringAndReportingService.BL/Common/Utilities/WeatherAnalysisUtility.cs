@@ -1,18 +1,12 @@
-using WeatherMonitoringAndReportingService.BL.BotsConfig;
 using WeatherMonitoringAndReportingService.BL.Weather;
 using WeatherMonitoringAndReportingService.BL.WeatherBots;
 
-namespace WeatherMonitoringAndReportingService.BL.Utilities;
+namespace WeatherMonitoringAndReportingService.BL.Common.Utilities;
 
 public static class WeatherAnalysisUtility
 {
-    private static IWeatherBotConfigIO _jsonWeatherConfig;
-    static WeatherAnalysisUtility()
-    {
-        _jsonWeatherConfig = JsonConfigProvider.Instance;
-    }
     
-    public static async Task<Dictionary<string, WeatherBotConfig>> AnalyzeWeatherData(
+    public static Dictionary<string, WeatherBotConfig> AnalyzeWeatherData(
         WeatherData weatherData, Dictionary<string, WeatherBotConfig> botConfigs
         )
     {
@@ -31,7 +25,6 @@ public static class WeatherAnalysisUtility
             botConfigs["SunBot"].Enabled = true;
         }
 
-        await _jsonWeatherConfig.WriteBotsConfigData(botConfigs);
         return botConfigs;
     }
 }

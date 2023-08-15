@@ -1,4 +1,4 @@
-namespace WeatherMonitoringAndReportingService.BL.Utilities;
+namespace WeatherMonitoringAndReportingService.BL.Common.Utilities;
 
 public static class ReadWeatherDataUtility
 {
@@ -6,16 +6,12 @@ public static class ReadWeatherDataUtility
     {
         Console.WriteLine("Please add the JSON data you want ot add!");
 
-        var jsonData = Console.ReadLine();
-
-        return jsonData;
+        return Console.ReadLine();
     }
     public static string? GetXmlWeatherData()
     {
         Console.WriteLine("Please add the XML data you want ot add!");
-
-        var xmlData = Console.ReadLine();
-
-        return xmlData;
+        
+        return Console.ReadLine();;
     }
 }

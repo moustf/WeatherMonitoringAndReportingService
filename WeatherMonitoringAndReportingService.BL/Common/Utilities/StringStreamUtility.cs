@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace WeatherMonitoringAndReportingService.BL.Utilities;
+namespace WeatherMonitoringAndReportingService.BL.Common.Utilities;
 
 public static class StringStreamUtility
 {
