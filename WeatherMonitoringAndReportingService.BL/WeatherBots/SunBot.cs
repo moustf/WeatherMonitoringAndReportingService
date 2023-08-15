@@ -2,11 +2,6 @@ namespace WeatherMonitoringAndReportingService.BL.WeatherBots;
 
 public class SunBot : IBotSubscriber
 {
-    public SunBot(IBotPublisher botPublisher)
-    {
-        botPublisher.Attach(this);
-    }
-    
     public void Update(IBotPublisher publisherBot)
     {
         var suBotConfigs = publisherBot.GetConfigData()["SunBot"];

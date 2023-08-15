@@ -2,11 +2,6 @@ namespace WeatherMonitoringAndReportingService.BL.WeatherBots;
 
 public class SnowBot : IBotSubscriber
 {
-    public SnowBot(IBotPublisher botPublisher)
-    {
-        botPublisher.Attach(this);
-    }
-    
     public void Update(IBotPublisher publisherBot)
     {
         var snowBotConfigs = publisherBot.GetConfigData()["SnowBot"];
