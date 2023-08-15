@@ -1,5 +1,5 @@
 using System.Xml.Serialization;
-using WeatherMonitoringAndReportingService.BL.Utilities;
+using WeatherMonitoringAndReportingService.BL.Common.Utilities;
 using WeatherMonitoringAndReportingService.BL.Weather;
 
 namespace WeatherMonitoringAndReportingService.BL.Parsers;

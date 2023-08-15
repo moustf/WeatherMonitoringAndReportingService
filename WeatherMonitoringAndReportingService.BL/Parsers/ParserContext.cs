@@ -3,22 +3,22 @@ using Weather;
 
 public class ParserContext
 {
-    private IParser _strategyParser;
+    private IParser _parser;
 
-    public ParserContext(IParser strategyParser)
+    public ParserContext(IParser parser)
     {
-        _strategyParser = strategyParser;
+        _parser = parser;
     }
 
     public void SetStrategyParser(IParser strategyParser)
     {
-        _strategyParser = strategyParser;
+        _parser = strategyParser;
     }
 
     public WeatherData Parse(string dataToParse)
     {
         Console.WriteLine("Parsing data from the context parser!");
         
-        return _strategyParser.Parse(dataToParse);
+        return _parser.Parse(dataToParse);
     }
 }
