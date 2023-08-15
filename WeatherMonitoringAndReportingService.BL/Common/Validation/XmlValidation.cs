@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace WeatherMonitoringAndReportingService.BL.Utilities;
+namespace WeatherMonitoringAndReportingService.BL.Validation;
 
 public class XmlValidation
 {

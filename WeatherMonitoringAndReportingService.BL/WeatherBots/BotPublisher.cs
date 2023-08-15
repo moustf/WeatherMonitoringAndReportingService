@@ -1,11 +1,11 @@
 namespace WeatherMonitoringAndReportingService.BL.WeatherBots;
 
-public class WeatherBotPublisher : IBotPublisher
+public class BotPublisher : IBotPublisher
 {
     private readonly List<IBotSubscriber> _botSubscribers;
     private Dictionary<string, WeatherBotConfig> _weatherBotConfigs;
 
-    public WeatherBotPublisher()
+    public BotPublisher()
     {
         _botSubscribers = new List<IBotSubscriber>();
         _weatherBotConfigs = new Dictionary<string, WeatherBotConfig>();

@@ -1,7 +1,7 @@
 using System.Text.Json;
 using WeatherMonitoringAndReportingService.BL.Weather;
 
-namespace WeatherMonitoringAndReportingService.BL.Utilities;
+namespace WeatherMonitoringAndReportingService.BL.Validation;
 
 public class JsonValidation
 {
