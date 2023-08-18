@@ -16,7 +16,7 @@ public class BotPublisher : IBotPublisher
         _botSubscribers.Add(subscriberBot);
     }
 
-    public void Detatch(IBotSubscriber subscriberBot)
+    public void Detach(IBotSubscriber subscriberBot)
     {
         _botSubscribers.Remove(subscriberBot);
     }
