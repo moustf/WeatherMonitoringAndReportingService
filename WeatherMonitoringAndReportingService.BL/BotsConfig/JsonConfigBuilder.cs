@@ -10,9 +10,9 @@ public class JsonConfigBuilder : IConfigBuilder
         var generalBusinessLayerDirectory = Directory
             .GetCurrentDirectory()
             .Split('/')
-            .TakeWhile(directory => directory != "bin");
+            .TakeWhile(directory => !directory.Contains("WeatherMonitoringAndReportingService."));
 
-        _pathToFile =  $"{string.Join('/', generalBusinessLayerDirectory)}/ConfigFiles/Bots.config.json";
+        _pathToFile =  $"{string.Join('/', generalBusinessLayerDirectory)}/WeatherMonitoringAndReportingService.BL/ConfigFiles/Bots.config.json";
     }
 
     public void CreateInstance()
