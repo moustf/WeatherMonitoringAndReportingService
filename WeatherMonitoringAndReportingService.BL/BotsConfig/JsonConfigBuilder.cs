@@ -9,13 +9,11 @@ public class JsonConfigBuilder : IConfigBuilder
     {
         var generalBusinessLayerDirectory = Directory
             .GetCurrentDirectory()
-            .Split('/')
+            .Split(Path.DirectorySeparatorChar) // Split using the correct directory separator
             .TakeWhile(directory => !directory.Contains("WeatherMonitoringAndReportingService."));
 
-        _pathToFile =  $"{string.Join('/', generalBusinessLayerDirectory)}/WeatherMonitoringAndReportingService.BL/ConfigFiles/Bots.config.json";
-        
-        Console.WriteLine("**************** Path to config file **********************");
-        Console.WriteLine(_pathToFile);
+        _pathToFile =
+            $"{string.Join(Path.DirectorySeparatorChar, generalBusinessLayerDirectory)}{Path.DirectorySeparatorChar}WeatherMonitoringAndReportingService.BL{Path.DirectorySeparatorChar}ConfigFiles{Path.DirectorySeparatorChar}Bots.config.json";
     }
 
     public void CreateInstance()
