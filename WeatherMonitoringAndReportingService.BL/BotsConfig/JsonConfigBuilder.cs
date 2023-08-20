@@ -13,6 +13,9 @@ public class JsonConfigBuilder : IConfigBuilder
             .TakeWhile(directory => !directory.Contains("WeatherMonitoringAndReportingService."));
 
         _pathToFile =  $"{string.Join('/', generalBusinessLayerDirectory)}/WeatherMonitoringAndReportingService.BL/ConfigFiles/Bots.config.json";
+        
+        Console.WriteLine("**************** Path to config file **********************");
+        Console.WriteLine(_pathToFile);
     }
 
     public void CreateInstance()
